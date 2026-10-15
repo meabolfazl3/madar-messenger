@@ -8,6 +8,17 @@ on:
 permissions:
   contents: write
 
+env:
+  TG_APP_NAME: "Madar"
+  APP_ID: "2496"
+  APP_HASH: "8da85b0d5b16525d4833b9b473da642d"
+  TG_APP_ID: "2496"
+  TG_APP_HASH: "8da85b0d5b16525d4833b9b473da642d"
+  TELEGRAM_API_ID: "2496"
+  TELEGRAM_API_HASH: "8da85b0d5b16525d4833b9b473da642d"
+  VITE_APP_ID: "2496"
+  VITE_APP_HASH: "8da85b0d5b16525d4833b9b473da642d"
+
 jobs:
   build-web:
     runs-on: ubuntu-latest
@@ -30,13 +41,8 @@ jobs:
         env:
           NODE_OPTIONS: ""
 
-      - name: Add Build Alias Script
-        run: npm pkg set scripts.build="npm run build:bundle"
-
       - name: Build Web Application
-        run: npm run build:bundle || npx vite build
-        env:
-          TG_APP_NAME: "Madar"
+        run: npx vite build
 
       - name: Upload Web Artifact
         uses: actions/upload-artifact@v4
@@ -107,9 +113,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
-
-      - name: Add Build Alias Script
-        run: npm pkg set scripts.build="npm run build:bundle"
 
       - name: Build Tauri Windows App (.exe)
         run: npm run tauri build || true
