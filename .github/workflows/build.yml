@@ -30,8 +30,11 @@ jobs:
         env:
           NODE_OPTIONS: ""
 
+      - name: Add Build Alias Script
+        run: npm pkg set scripts.build="npm run build:bundle"
+
       - name: Build Web Application
-        run: npm run build
+        run: npm run build:bundle || npx vite build
         env:
           TG_APP_NAME: "Madar"
 
@@ -104,6 +107,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
+
+      - name: Add Build Alias Script
+        run: npm pkg set scripts.build="npm run build:bundle"
 
       - name: Build Tauri Windows App (.exe)
         run: npm run tauri build || true
