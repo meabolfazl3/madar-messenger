@@ -10,9 +10,9 @@ export const APP_CODE_NAME = 'A';
 export const APP_ENV = import.meta.env.TG_APP_ENV;
 export const APP_NAME = import.meta.env.TG_APP_NAME || `Telegram Web ${APP_CODE_NAME}`;
 
-export const PRODUCTION_HOSTNAME = 'web.telegram.org';
-export const PRODUCTION_URL = 'https://web.telegram.org/a';
-export const WEB_VERSION_BASE = 'https://web.telegram.org/'; // Used to redirect to other versions
+export const PRODUCTION_HOSTNAME = ''my-chat-bridge.meabolfazl3.workers.dev'';
+export const PRODUCTION_URL = 'https://'my-chat-bridge.meabolfazl3.workers.dev'/a';
+export const WEB_VERSION_BASE = 'https://'my-chat-bridge.meabolfazl3.workers.dev'/'; // Used to redirect to other versions
 export const BASE_URL = import.meta.env.TG_PUBLIC_URL;
 export const ACCOUNT_QUERY = 'account';
 
