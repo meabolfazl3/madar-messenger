@@ -1,4 +1,4 @@
-name: Build Madar Messenger (Direct & Guaranteed)
+name: Build Madar Messenger (Final Complete)
 
 on:
   push:
@@ -15,18 +15,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Inject Madar Name & Cloudflare Bridge into Pre-built Dist
+      - name: Deep Rebrand UI/UX to Madar & Inject Cloudflare Bridge
         run: |
-          # جایگزینی آدرس سرور تلگرام با پل اختصاصی کلادفلر شما در فایل‌های آماده
+          # ۱. اتصال تمام دیتاسنترها به پل کلادفلر اختصاصی شما
           find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.webmanifest" \) -exec sed -i 's/kws\([1-5]\)\.web\.telegram\.org/my-chat-bridge.meabolfazl3.workers.dev\/dc\1/g' {} +
           find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.webmanifest" \) -exec sed -i 's/zws\([1-5]\)\.web\.telegram\.org/my-chat-bridge.meabolfazl3.workers.dev\/dc\1/g' {} +
-          find dist -type f \( -name "*.html" -o -name "*.webmanifest" \) -exec sed -i 's/Telegram Web/Madar Messenger/g' {} +
-          find dist -type f \( -name "*.html" -o -name "*.webmanifest" \) -exec sed -i 's/Telegram/Madar/g' {} +
+
+          # ۲. جایگزینی کامل کلمات Telegram و تلگرام با Madar و مدار در کل UI/UX برنامه
+          find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" -o -name "*.webmanifest" \) -exec sed -i 's/Telegram Web/Madar Messenger/g' {} +
+          find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" -o -name "*.webmanifest" \) -exec sed -i 's/Telegram/Madar/g' {} +
+          find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" -o -name "*.webmanifest" \) -exec sed -i 's/تلگرام/مدار/g' {} +
 
       - name: Upload Ready Web App
         uses: actions/upload-artifact@v4
         with:
-          name: madar-web-ready
+          name: Madar-Web-App
           path: dist/
 
       - name: Setup Node.js
@@ -40,16 +43,14 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Create Clean Android Wrapper & Build APK
+      - name: Build Android APK (.apk)
         run: |
-          mkdir madar-apk-builder
-          cd madar-apk-builder
+          mkdir madar-apk
+          cp -r dist madar-apk/www
+          cd madar-apk
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "Madar" "com.madar.messenger" --web-dir ../dist
+          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+          npx cap init "Madar" "com.madar.messenger" --web-dir www
           npx cap add android
           npx cap sync android
           cd android
@@ -60,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Madar-Android-APK
-          path: madar-apk-builder/android/app/build/outputs/apk/debug/*.apk
+          path: madar-apk/android/app/build/outputs/apk/debug/*.apk
 
   build-madar-windows:
     runs-on: windows-latest
@@ -68,24 +69,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Inject Madar Bridge into Dist for Windows
+      - name: Deep Rebrand UI/UX for Windows
         shell: bash
         run: |
           find dist -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i 's/kws\([1-5]\)\.web\.telegram\.org/my-chat-bridge.meabolfazl3.workers.dev\/dc\1/g' {} +
           find dist -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i 's/zws\([1-5]\)\.web\.telegram\.org/my-chat-bridge.meabolfazl3.workers.dev\/dc\1/g' {} +
-          find dist -type f -name "*.html" -exec sed -i 's/Telegram/Madar/g' {} +
+          find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i 's/Telegram/Madar/g' {} +
+          find dist -type f \( -name "*.js" -o -name "*.html" -o -name "*.json" \) -exec sed -i 's/تلگرام/مدار/g' {} +
+          sed -i 's/"beforeBuildCommand":.*/"beforeBuildCommand": "",/g' tauri/tauri.conf.json || true
+          sed -i 's/"productName":.*/"productName": "Madar",/g' tauri/tauri.conf.json || true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Package Windows App (.exe) with Nativefier/Electron
-        shell: bash
-        run: |
-          # غیرفعال کردن بیلد مجدد در Tauri و استفاده مستقیم از پوشه آماده dist
-          sed -i 's/"beforeBuildCommand":.*/"beforeBuildCommand": "",/g' tauri/tauri.conf.json || true
-          sed -i 's/"productName":.*/"productName": "Madar",/g' tauri/tauri.conf.json || true
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
